@@ -36,7 +36,11 @@ export function useScreenLogs() {
         { event: 'INSERT', schema: 'public', table: 'screen_logs' },
         (payload) => {
           console.log('New log received!', payload);
-          setLogs((currentLogs) => [payload.new, ...currentLogs]);
+          setLogs((currentLogs) => {
+            // Keep maximum of 500 logs in memory to prevent browser lag over time
+            const newLogs = [payload.new, ...currentLogs];
+            return newLogs.slice(0, 500);
+          });
         }
       )
       .subscribe((status) => {
